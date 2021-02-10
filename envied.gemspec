@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "envied"
   spec.version       = ENVied::VERSION
   spec.authors       = ["Gert Goet", "Javier Julio"]
-  spec.email         = ["gert@thinkcreate.nl", "jjfutbol@gmail.com"]
+  spec.email         = ["gert@thinkcreate.nl", "javier@jackpocket.com"]
   spec.summary       = %q{Ensure presence and type of ENV-variables}
   spec.description   = %q{Ensure presence and type of your app's ENV-variables.}
   spec.homepage      = "https://github.com/eval/envied"
@@ -21,6 +21,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.5"
 
   spec.add_development_dependency "bundler", "~> 2.0"
-  spec.add_development_dependency "rake", "~> 12.0"
+  spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
 end
