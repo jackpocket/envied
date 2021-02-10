@@ -8,7 +8,6 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
 
 * check for presence and correctness of ENV-variables
 * access to typed ENV-variables (integers, booleans etc. instead of just strings)
-* check the presence and correctness of a Heroku config
 
 ## Contents
 
@@ -19,11 +18,8 @@ For the rationale behind this project, see this [blogpost](http://www.gertgoet.c
   * [Groups](#groups)
   * [Defaults](#defaults)
   * [More examples](#more-examples)
-* [Command-line interface](#command-line-interface)
-* [How do I...?](#how-do-i)
 * [Testing](#testing)
 * [Developing](#developing)
-* [Contributing](#contributing)
 
 ## Quickstart
 
@@ -66,14 +62,6 @@ Add this line to your application's Gemfile:
 ...then bundle:
 
     $ bundle
-
-...then for Rails applications:
-
-    $ bundle exec envied init:rails
-
-...or for non-Rails applications:
-
-    $ bundle exec envied init
 
 ## Configuration
 
@@ -157,58 +145,6 @@ As a rule of thumb you should only use defaults:
 * See the [examples](/examples)-folder for a more extensive Envfile
 * See [the Envfile](https://github.com/eval/bunny_drain/blob/c54d7d977afb5e23a92da7a2fd0d39f6a7e29bf1/Envfile) for the bunny_drain application
 
-## Command-line interface
-
-For help on a specific command, use `envied help <command>`.
-
-```bash
-$ envied help
-Commands:
-  envied check                   # Checks whether you environment contains required variables
-  envied check:heroku            # Checks whether a Heroku config contains required variables
-  envied check:heroku:binstub    # Generates a shell script for the check:heroku-task
-  envied extract                 # Grep code to find ENV-variables
-  envied help [COMMAND]          # Describe available commands or one specific command
-  envied init                    # Generates a default Envfile in the current working directory
-  envied init:rails              # Generate all files needed for a Rails project
-  envied version, --version, -v  # Shows version number
-```
-
-## How do I
-
-### ...find all ENV-variables my app is currently using?
-
-```
-$ bundle exec envied extract
-```
-
-This comes in handy when you're not using ENVied yet. It will find all `ENV['KEY']` and `ENV.fetch('KEY')` statements in your project.
-
-It assumes a standard project layout (see the default value for the globs-option).
-
-### ...check the config of a Heroku app?
-
-The easiest/quickest is to run:
-
-```
-$ heroku config --json | bundle exec envied check:heroku
-```
-
-This is equivalent to having the heroku config as your local environment and running `envied check:heroku --groups default production`.
-
-You want to run this right before a deploy to Heroku. This prevents that your app will crash during bootup because ENV-variables are missing from heroku config.
-
-You can turn the above into a handy binstub like so:
-```
-$ bundle exec envied check:heroku:binstub
-# created bin/heroku-env-check
-```
-
-This way you can do stuff like:
-```
-$ ./bin/heroku-env-check && git push live master
-```
-
 ## Testing
 
 ```bash
@@ -221,11 +157,3 @@ bundle exec rspec
 ```bash
 bin/console
 ```
-
-## Contributing
-
-1. Fork it: http://github.com/eval/envied/fork
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Create a new pull request for your feature branch
