@@ -1,8 +1,9 @@
 ## master / unreleased
 
 * Now requiring Ruby 2.5+
-* Removed `coercible` dependency as now all coercion functionality is implemented locally. This is a backwards compatible change
-* Removed `thor` dependency and CLI
+* Removed `coercible` dependency as all coercion is now implemented within the library (backwards compatible)
+* Removed `thor` dependency and `envied` CLI
+* Added Ruby 2.7 and 3.0 builds to CI
 
 ## 0.9.1 / 2017-07-06
 
