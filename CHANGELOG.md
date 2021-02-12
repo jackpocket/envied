@@ -1,4 +1,4 @@
-## master / unreleased
+## 0.9.2 / 2021-02-12
 
 * Now requiring Ruby 2.5+
 * Removed `coercible` dependency as all coercion is now implemented within the library (backwards compatible)
