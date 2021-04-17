@@ -7,13 +7,13 @@ RSpec.describe ENVied::Coercer do
 
   describe '.supported_types' do
     it 'returns a sorted set of supported types' do
-      expect(described_class.supported_types).to eq %i(array boolean date float hash integer string symbol time uri)
+      expect(described_class.supported_types).to eq %i(array boolean date float hash integer json string symbol time uri)
     end
   end
 
   describe '.supported_type?' do
     it 'returns true for supported type' do
-      %i(array boolean date float hash integer string symbol time uri).each do |type|
+      %i(array boolean date float hash integer json string symbol time uri).each do |type|
         expect(described_class.supported_type?(type)).to eq true
       end
     end
@@ -160,6 +160,27 @@ RSpec.describe ENVied::Coercer do
 
       it 'fails when string starts with e' do
         expect { coerce('e1', :float) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+      end
+    end
+
+    describe 'to json' do
+      {'{}'=>{}, '{"a": 1}'=>{"a"=>1}}.each do |value, parsed|
+        it "converts #{value} to a parsed JSON" do
+          expect(coerce(value, :float)).to be_kind_of(Hash)
+          expect(coerce(value, :json)).to eq parsed
+        end
+      end
+
+      it 'fails with json that is not enclosed in {}' do
+        ['null', 'true', 'false', '1'].each do |value|
+          expect { coerce(value, :json) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        end
+      end
+
+      it 'fails with invalid json' do
+        ['', 'nil', '2021-04-17', '{"foo"}'].each do |value|
+          expect { coerce(value, :json) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        end
       end
     end
 

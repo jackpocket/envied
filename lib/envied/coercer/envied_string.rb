@@ -61,6 +61,17 @@ class ENVied::Coercer::ENViedString
     raise_unsupported_coercion(str, __method__)
   end
 
+  def to_json(str)
+    require 'json'
+    if str.is_a?(String) && str.first == '{' && str.last == '}'
+      JSON.parse(str)
+    else
+      raise_unsupported_coercion(str, __method__)
+    end
+  rescue JSON::ParserError
+    raise_unsupported_coercion(str, __method__)
+  end
+
   private
 
   def raise_unsupported_coercion(value, method)

@@ -73,6 +73,7 @@ The following types are supported:
 * `:boolean` (e.g. '0'/'1', 'f'/'t', 'false'/'true', 'off'/'on', 'no'/'yes' for resp. false and true)
 * `:integer`
 * `:float`
+* `:json`
 * `:symbol`
 * `:date` (e.g. '2014-3-26')
 * `:time` (e.g. '14:00')
