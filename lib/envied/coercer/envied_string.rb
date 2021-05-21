@@ -2,6 +2,7 @@ class ENVied::Coercer::ENViedString
   TRUE_VALUES = %w[1 on t true y yes].freeze
   FALSE_VALUES = %w[0 off f false n no].freeze
   BOOLEAN_MAP = (TRUE_VALUES.product([ true ]) + FALSE_VALUES.product([ false ])).to_h.freeze
+  UUID_REGEXP = /\A[0-9a-f]{8}-(:?[0-9a-f]{4}-){3}[0-9a-f]{12}\z/i.freeze
 
   def to_array(str)
     str.split(/(?<!\\),/).map{|i| i.gsub(/\\,/,',') }
@@ -70,6 +71,14 @@ class ENVied::Coercer::ENViedString
     end
   rescue JSON::ParserError
     raise_unsupported_coercion(str, __method__)
+  end
+
+  def to_uuid(str)
+    if UUID_REGEXP.match?(str)
+      str
+    else
+      raise_unsupported_coercion(str, __method__)
+    end
   end
 
   private

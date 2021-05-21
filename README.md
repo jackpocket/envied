@@ -80,6 +80,7 @@ The following types are supported:
 * `:hash` (e.g. 'a=1&b=2' becomes `{'a' => '1', 'b' => '2'}`)
 * `:array` (e.g. 'tag1,tag2' becomes `['tag1', 'tag2']`)
 * `:uri` (e.g. 'http://www.google.com' becomes result of `URI.parse('http://www.google.com')`)
+* `:uuid`
 
 ### Groups
 

@@ -7,13 +7,13 @@ RSpec.describe ENVied::Coercer do
 
   describe '.supported_types' do
     it 'returns a sorted set of supported types' do
-      expect(described_class.supported_types).to eq %i(array boolean date float hash integer json string symbol time uri)
+      expect(described_class.supported_types).to eq %i(array boolean date float hash integer json string symbol time uri uuid)
     end
   end
 
   describe '.supported_type?' do
     it 'returns true for supported type' do
-      %i(array boolean date float hash integer json string symbol time uri).each do |type|
+      %i(array boolean date float hash integer json string symbol time uri uuid).each do |type|
         expect(described_class.supported_type?(type)).to eq true
       end
     end
@@ -180,6 +180,20 @@ RSpec.describe ENVied::Coercer do
       it 'fails with invalid json' do
         ['', 'nil', '2021-04-17', '{"foo"}'].each do |value|
           expect { coerce(value, :json) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
+        end
+      end
+    end
+
+    describe 'to uuid' do
+      it 'accepts valid UUIDs' do
+        %w[c616eeb6-2244-4be4-a9f8-c67c29768109 4f0bf594-b08d-4bf2-9ba1-ae64c48523de].each do |value|
+          expect(coerce(value, :uuid)).to be_kind_of(String)
+        end
+      end
+
+      it 'fails with an invalid UUIDs' do
+        %w[abc 123 error].each do |value|
+          expect { coerce(value, :uuid) }.to raise_error(ENVied::Coercer::UnsupportedCoercion)
         end
       end
     end
