@@ -14,11 +14,16 @@ jobs:
         ruby: [ '2.6', '2.7', '3.0' ]
     name: Ruby ${{ matrix.ruby }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - name: Run Tests
-      run: |
-        RUBYOPT="-W:deprecated" bundle exec rake
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Run Tests (2.6 only)
+        if: ${{ matrix.ruby == '2.6' }}
+        run: |
+          bundle exec rake
+      - name: Run Tests
+        if: ${{ matrix.ruby != '2.6' }}
+        run: |
+          RUBYOPT="-W:deprecated" bundle exec rake
