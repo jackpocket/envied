@@ -21,4 +21,4 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run Tests
       run: |
-        bundle exec rake
+        RUBYOPT="-W:deprecated" bundle exec rake
