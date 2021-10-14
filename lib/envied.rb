@@ -57,20 +57,6 @@ class ENVied
     end
   end
 
-  def self.springify(&block)
-    if defined?(ActiveSupport::Deprecation.warn) && !required?
-      ActiveSupport::Deprecation.warn(<<~MSG)
-        It's no longer recommended to `ENVied.require` within ENVied.springify's
-        block.
-      MSG
-    end
-    if spring_enabled?
-      Spring.after_fork(&block)
-    else
-      block.call
-    end
-  end
-
   def self.spring_enabled?
     defined?(Spring) && Spring.respond_to?(:watcher)
   end
