@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ '2.6', '2.7', '3.0' ]
+        ruby: [ '2.7', '3.0', '3.1' ]
     name: Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v3
@@ -19,11 +19,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Run Tests (2.6 only)
-        if: ${{ matrix.ruby == '2.6' }}
+      - name: Run Tests
+        env:
+          RUBYOPT: "-W:deprecated"
         run: |
           bundle exec rake
-      - name: Run Tests
-        if: ${{ matrix.ruby != '2.6' }}
-        run: |
-          RUBYOPT="-W:deprecated" bundle exec rake
