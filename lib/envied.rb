@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'envied/version'
 require 'envied/env_proxy'
 require 'envied/coercer'
@@ -8,11 +10,11 @@ require 'envied/configuration'
 class ENVied
   class << self
     attr_reader :env, :config
-    alias_method :required?, :env
+    alias required? env
   end
 
   def self.require(*args, **options)
-    requested_groups = (args && !args.empty?) ? args : ENV['ENVIED_GROUPS']
+    requested_groups = args && !args.empty? ? args : ENV['ENVIED_GROUPS']
     env!(requested_groups, **options)
     error_on_missing_variables!(**options)
     error_on_uncoercible_variables!(**options)
@@ -27,34 +29,34 @@ class ENVied
 
   def self.error_on_missing_variables!(**options)
     names = env.missing_variables.map(&:name)
-    if names.any?
-      msg = "The following environment variables should be set: #{names.join(', ')}."
-      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
-      raise msg
-    end
+    return unless names.any?
+
+    msg = "The following environment variables should be set: #{names.join(', ')}."
+    msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
+    raise msg
   end
 
   def self.error_on_uncoercible_variables!(**options)
     errors = env.uncoercible_variables.map do |v|
-      format("%{name} with %{value} (%{type})", name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
+      format('%<name>s with %<value>s (%<type>s)', name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
     end
-    if errors.any?
-      msg = "The following environment variables are not coercible: #{errors.join(", ")}."
-      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
-      raise msg
-    end
+    return unless errors.any?
+
+    msg = "The following environment variables are not coercible: #{errors.join(', ')}."
+    msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
+    raise msg
   end
 
   def self.required_groups(*groups)
-    splitter = ->(group){ group.is_a?(String) ? group.split(/ *, */) : group }
+    splitter = ->(group) { group.is_a?(String) ? group.split(/ *, */) : group }
     result = groups.compact.map(&splitter).flatten
     result.any? ? result.map(&:to_sym) : [:default]
   end
 
   def self.ensure_spring_after_fork_require(args, **options)
-    if spring_enabled? && !options[:via_spring]
-      Spring.after_fork { ENVied.require(args, options.merge(via_spring: true)) }
-    end
+    return unless spring_enabled? && !options[:via_spring]
+
+    Spring.after_fork { ENVied.require(args, **options.merge(via_spring: true)) }
   end
 
   def self.springify(&block)
@@ -80,6 +82,6 @@ class ENVied
   end
 
   def self.respond_to_missing?(method, include_private = false)
-    (env && env.has_key?(method)) || super
+    env&.key?(method) || super
   end
 end
