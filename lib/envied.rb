@@ -16,8 +16,6 @@ class ENVied
     env!(requested_groups, **options)
     error_on_missing_variables!(**options)
     error_on_uncoercible_variables!(**options)
-
-    ensure_spring_after_fork_require(args, options)
   end
 
   def self.env!(requested_groups, **options)
@@ -28,9 +26,7 @@ class ENVied
   def self.error_on_missing_variables!(**options)
     names = env.missing_variables.map(&:name)
     if names.any?
-      msg = "The following environment variables should be set: #{names.join(', ')}."
-      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
-      raise msg
+      raise "The following environment variables should be set: #{names.join(', ')}."
     end
   end
 
@@ -39,9 +35,7 @@ class ENVied
       format("%{name} with %{value} (%{type})", name: v.name, value: env.value_to_coerce(v).inspect, type: v.type)
     end
     if errors.any?
-      msg = "The following environment variables are not coercible: #{errors.join(", ")}."
-      msg << "\nPlease make sure to stop Spring before retrying." if spring_enabled? && !options[:via_spring]
-      raise msg
+      raise "The following environment variables are not coercible: #{errors.join(", ")}."
     end
   end
 
@@ -49,16 +43,6 @@ class ENVied
     splitter = ->(group){ group.is_a?(String) ? group.split(/ *, */) : group }
     result = groups.compact.map(&splitter).flatten
     result.any? ? result.map(&:to_sym) : [:default]
-  end
-
-  def self.ensure_spring_after_fork_require(args, options)
-    if spring_enabled? && !options[:via_spring]
-      Spring.after_fork { ENVied.require(*args, **options.merge(via_spring: true)) }
-    end
-  end
-
-  def self.spring_enabled?
-    defined?(Spring) && Spring.respond_to?(:watcher)
   end
 
   def self.method_missing(method, *args, &block)
